@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SPP</string>
+    <string name="scan">Scan</string>
+    <string name="paired_devices">Paired Devices</string>
+    <string name="new_devices">New Devices</string>
+    <string name="none_device">No device found</string>
+</resources>
