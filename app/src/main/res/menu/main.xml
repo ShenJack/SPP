@@ -6,4 +6,6 @@
         android:id="@+id/menu_scan"
         app:showAsAction="always"
         android:title="@string/scan"/>
+
+
 </menu>

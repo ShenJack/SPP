@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     private Set<BluetoothDevice> bondedDevices;
     private ArrayList<BluetoothDevice> names = new ArrayList<BluetoothDevice>();
     private ListView deviceList;
+    private BluetoothAdapter mAdapter = BluetoothAdapter.getDefaultAdapter();
+    private BluetoothChatService mChatService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -123,7 +126,8 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     private void connectDevice(Intent data, boolean secure) {
         String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-
+        BluetoothDevice device = mAdapter.getRemoteDevice(address);
+        mChatService.connect(device,secure);
     }
 
     @Override
