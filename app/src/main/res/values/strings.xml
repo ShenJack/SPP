@@ -5,4 +5,5 @@
     <string name="new_devices">New Devices</string>
     <string name="none_device">No device found</string>
     <string name="scan_for_new_device">Scan for new device</string>
+    <string name="send">send</string>
 </resources>

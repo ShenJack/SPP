@@ -37,11 +37,10 @@ public class BluetoothChatService {
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
-    private static final int STATE_NONE = 0;
-    private static final int STATE_LISTEN = 1;
-    private static final int STATE_CONNECTTING = 2;
-    private static final int STATE_CONNECTED = 3;
-    private int state;
+    public static final int STATE_LISTEN = 1;
+    public static final int STATE_NONE = 0;
+    public static final int STATE_CONNECTTING = 2;
+    public static final int STATE_CONNECTED = 3;
 
     private AcceptThread mSecureAccepThread;
     private AcceptThread mInsecureAcceptThread;
@@ -63,7 +62,7 @@ public class BluetoothChatService {
     }
 
     public synchronized int getState() {
-        return state;
+        return mState;
     }
 
     public synchronized void start() {
