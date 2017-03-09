@@ -29,7 +29,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
     private Set<BluetoothDevice> bondedDevices;
@@ -81,33 +81,6 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             setupChat();
         }
     }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.toggleButton: {
-                if (isChecked) {
-                    textView.setText("Checked");
-                } else {
-                    textView.setText("Unchecked");
-                }
-                break;
-            }
-            case R.id.switch1: {
-                if (isChecked) {
-                    textView.setText("Switch ON");
-                } else {
-                    textView.setText("Switch OFF");
-                }
-                break;
-            }
-
-            default:
-                Toast.makeText(this, "Unknown button", Toast.LENGTH_SHORT).show();
-
-        }
-    }
-
 
     private void initialize() {
         BluetoothUtils.turnOnBluetooth(this);
