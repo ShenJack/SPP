@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ButtonBarLayout;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +23,13 @@ import java.util.Set;
 
 public class DeviceListActivity extends AppCompatActivity implements View.OnClickListener{
 
+
+
+
+
     ListView list_new_devices;
-    private ArrayAdapter<String> pairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.bluetooth_item);
-    private ArrayAdapter<String> newDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.bluetooth_item);
+    private ArrayAdapter<String> pairedDevicesArrayAdapter;
+    private ArrayAdapter<String> newDevicesArrayAdapter;
 
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
     private BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -36,9 +42,18 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
         list_new_devices = (ListView) findViewById(R.id.list_new_devices);
 
         ListView list_paired_devices = (ListView) findViewById(R.id.list_paired_devices);
-
+        final Button bt_scan = (Button) findViewById(R.id.bt_scan);
+        bt_scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scanForNewDevices();
+                v.setVisibility(View.GONE);
+            }
+        });
         ListView list_new_devices = (ListView) findViewById(R.id.list_new_devices);
 
+        pairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.bluetooth_item);
+        newDevicesArrayAdapter = new ArrayAdapter<String>(this,R.layout.bluetooth_item);
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
 
         for (BluetoothDevice device :
@@ -55,14 +70,16 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
         list_new_devices.setOnItemClickListener(null);
 
         IntentFilter Found_filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(mReceiver,Found_filter);
+        registerReceiver(mReceiver,Found_filter);
         IntentFilter Finished_filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        this.registerReceiver(mReceiver,Finished_filter);
+        registerReceiver(mReceiver,Finished_filter);
 
     }
     private void scanForNewDevices(){
         setTitle("Scanning");
+        if(mBtAdapter.isDiscovering()){mBtAdapter.cancelDiscovery();}
         mBtAdapter.startDiscovery();
+        findViewById(R.id.list_new_devices).setVisibility(View.VISIBLE);
 
     }
 
@@ -70,12 +87,13 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(action.equals(BluetoothDevice.ACTION_FOUND)){
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_NAME);
+            if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(device.getBondState() != BluetoothDevice.BOND_BONDED){
                     newDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
             }else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                setTitle("Scanning finish");
                 Toast.makeText(context, "Select a device", Toast.LENGTH_LONG).show();
                 if(newDevicesArrayAdapter.getCount() == 0){
                     String noDevice = getResources().getText(R.string.none_device).toString();
@@ -117,8 +135,12 @@ public class DeviceListActivity extends AppCompatActivity implements View.OnClic
             String info = ((TextView)view).getText().toString();
             String address = info.substring(info.length()-17);
 
-            Intent intent = new Intent().putExtra(EXTRA_DEVICE_ADDRESS,address);
+            Intent intent = new Intent();
+            intent.putExtra(EXTRA_DEVICE_ADDRESS,address);
+
             setResult(RESULT_OK,intent);
+
+            finish();
         }
     };
 }

@@ -34,9 +34,7 @@ public class deviceViewAdaper extends ArrayAdapter<BluetoothDevice> {
             view = convertView;
         }
         TextView device_name = (TextView) view.findViewById(R.id.device_name);
-        TextView device_mac = (TextView)view.findViewById(R.id.device_mac);
         device_name.setText(bluetoothDevice.getName());
-        device_mac.setText(bluetoothDevice.getAddress());
         return view;
     }
 }
